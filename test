@@ -1,0 +1,61 @@
+--SQL test 07/12/2022
+
+----------Q1-----------
+
+select * from Products where UnitPrice between 30 and 40 
+
+----------Q2-----------
+select Products.ProductName from Products inner join Categories on Products.CategoryID= Categories.CategoryID
+where Categories.CategoryName='Condiments'
+
+----------q3------------
+
+select Products.ProductName,Categories.Description from Products inner join Categories on Products.CategoryID= Categories.CategoryID
+where Categories.Description like '%S%'  order by Products.ProductName
+
+---------q4------------
+
+select distinct Products.ProductName from Products inner join [Order Details] on Products.ProductID=[Order Details].ProductID
+inner join Orders on [Order Details].OrderID = Orders.OrderID where Orders.CustomerID = 'ALFKI'
+
+---------q5------------
+select * from Orders where Orders.ShipCity='London' or Orders.ShipCountry='Brazil'
+
+---------q6------------
+
+select distinct CustomerID from Orders inner join Shippers 
+on Orders.ShipVia = Shippers.ShipperID 
+where Shippers.CompanyName like 'Federal Shipping'
+
+---------q7------------
+
+create procedure myprocedure 
+@orderID int 
+as 
+begin 
+select Products.ProductName from Products inner join [Order Details] on Products.ProductID= [Order Details].ProductID
+where [Order Details].OrderID=@orderID
+select sum ([Order Details].UnitPrice) from [Order Details]
+where [Order Details].OrderID=@orderID
+end 
+exec myprocedure  @orderID=10248
+
+
+-----------q8----------
+select distinct Orders.CustomerID, Orders.EmployeeID,Orders.ShipVia, Orders.Freight, Orders.ShipName,Orders.ShipAddress,
+Orders.ShipCity,Orders.ShipRegion,Orders.ShipPostalCode,Orders.ShipCountry from Orders where Orders.CustomerID like 'B%' 
+and Orders.ShipVia=1 and 
+(Orders.ShipCountry like 'Sweden' or ShipCountry like 'France' or ShipCountry like 'Canada') 
+and (EmployeeID = 2 or EmployeeID = 5)
+
+---------q9--------------
+select [Order Details].OrderID, [Order Details].ProductID, [Order Details].UnitPrice, [Order Details].Quantity, [Order Details].Discount,
+Orders.OrderDate,Orders.EmployeeID,Orders.CustomerID from Orders inner join [Order Details] on Orders.OrderID=[Order Details].OrderID
+OR  [Order Details].OrderID != Orders.OrderID 
+where [Order Details].OrderID = 10248 and CustomerID like 'VINET'
+order by UnitPrice
+
+
+---------10-------------
+select Customers.CustomerID, Customers.Region,Customers.Country from Customers 
+where Customers.Country='France' or Customers.Country='Canada'
